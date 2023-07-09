@@ -1,2 +1,3 @@
 # CMSIS
-Common Microcontroller Software Interface Standard
+
+Common Micro-controller Software Interface Standard
