@@ -1,7 +1,3 @@
 .vscode/*
 *.o
-<<<<<<< HEAD
 *.elf
-=======
-*.elf
->>>>>>> bd42ce6cb73ad17874fbd2277a9033ab554a29e9
