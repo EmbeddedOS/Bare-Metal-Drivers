@@ -16,3 +16,7 @@ final.elf: $(OBJS)
 
 clean:
 	rm -rf *.o *.elf
+
+flash:
+	# Run openocd server, connect via GDB client or Telnet Client.
+	openocd -f board/stm32f4discovery.cfg

@@ -24,7 +24,9 @@ SECTIONS
         *(.data)
         . = ALIGN(0x4);     /* Align _end_of_data symbol.                           */
         _end_of_data = .;   /* Capture end of `.data` section in vma to the symbol. */
-    }> SRAM AT> FLASH       /* VMA is SRAM and LMA is FLASH.                        */
+    }> SRAM AT> FLASH       /* VMA is SRAM and LMA is FLASH. We will spent same size 
+                             * in SRAM for data section, and copy it when program 
+                             * running.                                              */
 
     .bss :
     {
