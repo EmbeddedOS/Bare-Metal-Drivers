@@ -1,7 +1,7 @@
 CC=arm-none-eabi-gcc
 MACH=cortex-m4
 CFLAGS= -c -mcpu=$(MACH) -mthumb -std=gnu11 -o0 -Wall
-LDFLAGS= -T linker_stm32f407xx.ld -nostdlib
+LDFLAGS= -T linker_stm32f407xx.ld -nostdlib -Wl,-Map=memory.map
 OBJS+= 	./main.o \
 		./startup_stm32f407xx.o
 

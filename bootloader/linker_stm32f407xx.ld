@@ -14,13 +14,15 @@ SECTIONS
         *(.isr_vector)      /* First of `.text` section will be ISR vector table.   */
         *(.text)            /* Merge `.text` section of all input files.            */
         *(.rodata)          /* Next one will be read only data section.             */
-        end_of_text = .;    /* Make a symbol that store end of text address.        */
+        . = ALIGN(0x4);     /* Align _end_of_text symbol.                           */
+        _end_of_text = .;   /* Make a symbol that store end of text address.        */
     }> FLASH                /* Load this section in FLASH memory.                   */
 
     .data :
     {
         _start_of_data = .; /* Capture start of `.data` section in vma to symbol.   */
         *(.data)
+        . = ALIGN(0x4);     /* Align _end_of_data symbol.                           */
         _end_of_data = .;   /* Capture end of `.data` section in vma to the symbol. */
     }> SRAM AT> FLASH       /* VMA is SRAM and LMA is FLASH.                        */
 
@@ -28,6 +30,8 @@ SECTIONS
     {
         _start_of_bss = .;  /* Capture start of `.bss` section in vma to symbol.    */
         *(.bss)
+        *(COMMON)
+        . = ALIGN(0x4);     /* Align _end_of_bss symbol.                            */
         _end_of_bss = .;    /* Capture end of `.bss` section in vma to symbol.      */
     }> SRAM
 }
