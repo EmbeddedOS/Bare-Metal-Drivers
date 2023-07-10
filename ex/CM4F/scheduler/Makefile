@@ -1,15 +1,15 @@
 CC=arm-none-eabi-gcc
 MACH=cortex-m4
 CFLAGS= -c -mcpu=$(MACH) -mthumb -std=gnu11 -o0 -Wall
-
+LDFLAGS= -T linker_stm32f407xx.ld -nostdlib
 OBJS+= 	./main.o \
-		./stm32_startup.o
+		./startup_stm32f407xx.o
 
 all: final.elf
-	@echo "Building final executable file."
+	@echo "BUild final executable file done."
 
 final.elf: $(OBJS)
-	@echo "Do not thing."
+	$(CC) $^ -o $@ $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $^ -o $@
