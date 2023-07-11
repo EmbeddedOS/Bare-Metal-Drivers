@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "main.h"
+#include "led.h"
 
 uint8_t current_task = 1;
 uint32_t g_tick_count = 0;
@@ -42,6 +43,7 @@ int main(void)
 
 	/* 3. Initialize stack for tasks. */
 	init_tasks_stack();
+	led_init_all();
 
 	/* 4. Initialize sys-tick timer to emit exception every 1ms. */
 	init_systick_timer(1000);
@@ -198,7 +200,10 @@ __attribute__((naked)) void switch_to_psp()
 void task_1_handler(void)
 {
 	while(1) {
-		printf("task_1_handler\n");
+		//printf("task_1_handler\n");
+		led_on(LED_GREEN);
+		task_delay(1000);
+		led_off(LED_GREEN);
 		task_delay(1000);
 	}
 }
@@ -206,15 +211,20 @@ void task_1_handler(void)
 void task_2_handler(void)
 {
 	while(1) {
-		printf("task_2_handler\n");
+		//printf("task_2_handler\n");
+		led_on(LED_ORANGE);
 		task_delay(2000);
-	}
+		led_off(LED_ORANGE);
+		task_delay(2000);	}
 }
 
 void task_3_handler(void)
 {
 	while(1) {
-		printf("task_3_handler\n");
+		//printf("task_3_handler\n");
+		led_on(LED_BLUE);
+		task_delay(4000);
+		led_off(LED_BLUE);
 		task_delay(4000);
 	}
 }
@@ -222,7 +232,10 @@ void task_3_handler(void)
 void task_4_handler(void)
 {
 	while(1) {
-		printf("task_4_handler\n");
+		//printf("task_4_handler\n");
+		led_on(LED_RED);
+		task_delay(8000);
+		led_off(LED_RED);
 		task_delay(8000);
 	}
 }

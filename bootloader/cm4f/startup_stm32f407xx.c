@@ -9,10 +9,14 @@
 /* Get section boundary symbols from linker. */
 extern uint32_t _start_of_data;
 extern uint32_t _start_of_bss;
+extern uint32_t _load_data;
 
 extern uint32_t _end_of_text;
 extern uint32_t _end_of_data;
 extern uint32_t _end_of_bss;
+
+/* Extern function from standard library nano specs. */
+void __libc_init_array(void);
 
 int main(void);
 void Reset_Handler(void);
@@ -224,31 +228,33 @@ uint32_t vector_table[] __attribute__((section(".isr_vector"))) = {
 void Reset_Handler(void)
 {
     /* 1. Copy .data section from FLASH to SRAM. */
-    uint32_t data_size = &_end_of_data - &_start_of_data;
-    uint8_t *pDst = (uint8_t *)_start_of_data;  /* SRAM     */
-    uint8_t *pSrc = (uint8_t *)_end_of_text;    /* FLASH    */
+    uint32_t data_size = (uint32_t)&_end_of_data - (uint32_t)&_start_of_data;
+    uint8_t *pDst = (uint8_t *)&_start_of_data;  /* SRAM     */
+    uint8_t *pSrc = (uint8_t *)&_load_data;      /* FLASH    */
 
     for (uint32_t i = 0; i < data_size; i++)
     {
         *pDst = *pSrc;
 
-        /* Point to next byte. */
+        // Point to next byte.
         pDst++;
         pSrc++;
     }
 
     /* 2. Initialize .bss to zero. */
-    uint32_t bss_size = &_end_of_bss - &_start_of_bss;
-    uint8_t *pBss = (uint8_t *)_start_of_bss;
+    uint32_t bss_size = (uint32_t)&_end_of_bss - (uint32_t)&_start_of_bss;
+    uint8_t *pBss = (uint8_t *)&_start_of_bss;
     for (uint32_t i = 0; i < bss_size; i++)
     {
         *pBss = 0;
-
-        /* Point to next byte. */
+        // Point to next byte.
         pBss++;
     }
 
-    /* 3. Call main() function. */
+    /* 3. Initialize libc. */
+    __libc_init_array();
+
+    /* 4. Call main() function. */
     main();
 }
 
