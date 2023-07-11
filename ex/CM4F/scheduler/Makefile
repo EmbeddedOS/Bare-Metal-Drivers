@@ -1,15 +1,16 @@
 CC=arm-none-eabi-gcc
 MACH=cortex-m4
 CFLAGS= -c -mcpu=$(MACH) -mthumb -std=gnu11 -o0 -Wall
-LDFLAGS= -T linker_stm32f407xx.ld -nostdlib -Wl,-Map=memory.map
+LDFLAGS= --specs=nano.specs -T linker_stm32f407xx.ld -Wl,-Map=memory.map
 OBJS+= 	./main.o \
-		./startup_stm32f407xx.o
+		./startup_stm32f407xx.o \
+		./syscalls.o
 
 all: final.elf
 	@echo "BUild final executable file done."
 
 final.elf: $(OBJS)
-	$(CC) $^ -o $@ $(LDFLAGS)
+	$(CC) $(LDFLAGS) $^ -o $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) $^ -o $@

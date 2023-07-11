@@ -198,6 +198,7 @@ __attribute__((naked)) void switch_to_psp()
 void task_1_handler(void)
 {
 	while(1) {
+		printf("task_1_handler\n");
 		task_delay(1000);
 	}
 }
@@ -205,6 +206,7 @@ void task_1_handler(void)
 void task_2_handler(void)
 {
 	while(1) {
+		printf("task_2_handler\n");
 		task_delay(2000);
 	}
 }
@@ -212,6 +214,7 @@ void task_2_handler(void)
 void task_3_handler(void)
 {
 	while(1) {
+		printf("task_3_handler\n");
 		task_delay(4000);
 	}
 }
@@ -219,6 +222,7 @@ void task_3_handler(void)
 void task_4_handler(void)
 {
 	while(1) {
+		printf("task_4_handler\n");
 		task_delay(8000);
 	}
 }

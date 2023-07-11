@@ -11,29 +11,34 @@ SECTIONS
 {
     .text :
     {
-        *(.isr_vector)      /* First of `.text` section will be ISR vector table.   */
-        *(.text)            /* Merge `.text` section of all input files.            */
-        *(.rodata)          /* Next one will be read only data section.             */
-        . = ALIGN(0x4);     /* Align _end_of_text symbol.                           */
-        _end_of_text = .;   /* Make a symbol that store end of text address.        */
-    }> FLASH                /* Load this section in FLASH memory.                   */
+        *(.isr_vector)                  /* First of `.text` section will be ISR vector table.   */
+        *(.text)                        /* Merge `.text` section of all input files.            */
+        *(.rodata)                      /* Next one will be read only data section.             */
+        . = ALIGN(0x4);                 /* Align _end_of_text symbol.                           */
+        _end_of_text = .;               /* Make a symbol that store end of text address.        */
+    }> FLASH                            /* Load this section in FLASH memory.                   */
 
     .data :
     {
-        _start_of_data = .; /* Capture start of `.data` section in vma to symbol.   */
+        _start_of_data = .;             /* Capture start of `.data` section in vma to symbol.   */
         *(.data)
-        . = ALIGN(0x4);     /* Align _end_of_data symbol.                           */
-        _end_of_data = .;   /* Capture end of `.data` section in vma to the symbol. */
-    }> SRAM AT> FLASH       /* VMA is SRAM and LMA is FLASH. We will spent same size 
-                             * in SRAM for data section, and copy it when program 
-                             * running.                                              */
+        . = ALIGN(0x4);                 /* Align _end_of_data symbol.                           */
+        _end_of_data = .;               /* Capture end of `.data` section in vma to the symbol. */
+    }> SRAM AT> FLASH                   /* VMA is SRAM and LMA is FLASH. We will spent same size 
+                                         * in SRAM for data section, and copy it when program 
+                                         * running.                                              */
 
     .bss :
     {
-        _start_of_bss = .;  /* Capture start of `.bss` section in vma to symbol.    */
+        _start_of_bss = .;              /* Capture start of `.bss` section in vma to symbol.    */
+        __bss_start__ = _start_of_bss;  /* Make this symbol for nano.specs runtime library.     */
         *(.bss)
         *(COMMON)
-        . = ALIGN(0x4);     /* Align _end_of_bss symbol.                            */
-        _end_of_bss = .;    /* Capture end of `.bss` section in vma to symbol.      */
+        . = ALIGN(0x4);                 /* Align _end_of_bss symbol.                            */
+        _end_of_bss = .;                /* Capture end of `.bss` section in vma to symbol.      */
+        __bss_end__ = _end_of_bss;      /* Make this symbol for nano.specs runtime library.     */
+        . = ALIGN(0x4);                 /* Align end symbol.                                    */
+        end = .;                        /* Make this symbol for Heap start memory management
+                                         * This used in _sbrk() system call.                    */
     }> SRAM
 }
