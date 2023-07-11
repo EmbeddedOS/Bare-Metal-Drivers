@@ -97,3 +97,15 @@ monitor reset
 ```bash
 telnet localhost 6666
 ```
+
+- To using `printf()` run executable file that built with semi-host.
+
+```gdb
+monitor flash write_image erase final_semihost.elf
+```
+
+- And we need enable semi-hosting after flash:
+
+```gdb
+monitor arm semihosting enable
+```

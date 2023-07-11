@@ -22,6 +22,10 @@
 #include "main.h"
 #include "led.h"
 
+#ifdef USING_SEMI_HOST
+extern void initialise_monitor_handles(void);
+#endif
+
 uint8_t current_task = 1;
 uint32_t g_tick_count = 0;
 
@@ -38,21 +42,28 @@ int main(void)
 	/* 1. Enable processor faults. */
 	enable_system_fault_exceptions();
 
-	/* 2. Initialize stack for scheduler. */
+#ifdef USING_SEMI_HOST
+	/* 2. Initialize Semi Host for debug purpose using OpenOCD. */
+	initialise_monitor_handles();
+#endif
+
+	/* 3. Initialize stack for scheduler. */
 	init_scheduler_stack();
 
-	/* 3. Initialize stack for tasks. */
+	/* 4. Initialize stack for tasks. */
 	init_tasks_stack();
+
+	/* 5. Initialize 4 led of board for debug purpose. */
 	led_init_all();
 
-	/* 4. Initialize sys-tick timer to emit exception every 1ms. */
+	/* 6. Initialize sys-tick timer to emit exception every 1ms. */
 	init_systick_timer(1000);
 
-	/* 5. Change stack pointer to use PSP and run the first task. */
+	/* 7. Change stack pointer to use PSP and run the first task. */
 	switch_to_psp();
 	task_1_handler();
 
-    /* 6. Loop forever. */
+    /* 8. Loop forever. */
 	for(;;);
 }
 
@@ -200,7 +211,7 @@ __attribute__((naked)) void switch_to_psp()
 void task_1_handler(void)
 {
 	while(1) {
-		//printf("task_1_handler\n");
+		printf("task_1_handler\n");
 		led_on(LED_GREEN);
 		task_delay(1000);
 		led_off(LED_GREEN);
@@ -211,7 +222,7 @@ void task_1_handler(void)
 void task_2_handler(void)
 {
 	while(1) {
-		//printf("task_2_handler\n");
+		printf("task_2_handler\n");
 		led_on(LED_ORANGE);
 		task_delay(2000);
 		led_off(LED_ORANGE);
@@ -221,7 +232,7 @@ void task_2_handler(void)
 void task_3_handler(void)
 {
 	while(1) {
-		//printf("task_3_handler\n");
+		printf("task_3_handler\n");
 		led_on(LED_BLUE);
 		task_delay(4000);
 		led_off(LED_BLUE);
@@ -232,7 +243,7 @@ void task_3_handler(void)
 void task_4_handler(void)
 {
 	while(1) {
-		//printf("task_4_handler\n");
+		printf("task_4_handler\n");
 		led_on(LED_RED);
 		task_delay(8000);
 		led_off(LED_RED);
