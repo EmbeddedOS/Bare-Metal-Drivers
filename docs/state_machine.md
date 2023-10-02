@@ -349,3 +349,18 @@ void loop()
   - STAT
 
 - These are the different scenarios which the ProTimer application object lifecycle passes through.
+
+### UML State machine internal state activities (entry/exit/do)
+
+- Internal activities compartment
+  - This compartment holds a list of internal behaviors associated with a state.
+  - Each entry has following format:
+    - `<behavior-type-label>['/'<behavior-expression>]`
+  - Example:
+    - `entry`, `exit`, `do` are internal activities labels or keywords defined in the UML. Do not use these keywords to represent events in the state machine diagram.
+
+- Internal activity labels
+  - These labels identify the circumstances under which the behaviors specified by the `behavior-expression` is executed.
+  - 1. *entry*: Behavior identified by `<behavior-expression>` will be executed upon entry to the state. Use the *entry* keyword if the state has entry action.
+  - 2. *exit*: Behavior identified by `<behavior-expression>` will be executed upon exit to the state. Use the *exit* keyword if a state has exit action.
+  - 3. *do*: Behavior identified by `<behavior-expression>` will be executed as long as the object is in the state or until the computation specified by the expression is completed. This represents ongoing behavior. Use the *do* keyword only if a state has `do` action.
