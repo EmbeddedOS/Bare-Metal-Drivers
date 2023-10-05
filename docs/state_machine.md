@@ -364,3 +364,21 @@ void loop()
   - 1. *entry*: Behavior identified by `<behavior-expression>` will be executed upon entry to the state. Use the *entry* keyword if the state has entry action.
   - 2. *exit*: Behavior identified by `<behavior-expression>` will be executed upon exit to the state. Use the *exit* keyword if a state has exit action.
   - 3. *do*: Behavior identified by `<behavior-expression>` will be executed as long as the object is in the state or until the computation specified by the expression is completed. This represents ongoing behavior. Use the *do* keyword only if a state has `do` action.
+
+### Events and signals
+
+- Events (Trigger)
+- What is an event?
+  - Events are incidents or a stimulus by which a state machine can be triggered; incidents are abstracted as events.
+  - In state machine events cause transitions (external or internal).
+
+- Incidents in the operation of a microwave oven:
+  - 1. Opening door; Heater off, lights on.
+  - 2. Closing door; lights off.
+  - 3. Set timer; manage time.
+  - 4. Start; heater ON.
+
+- Events:
+  - An event usually has 2 components:
+    - 1. Signal.
+    - 2. One or more associated values or parameters (optional).
