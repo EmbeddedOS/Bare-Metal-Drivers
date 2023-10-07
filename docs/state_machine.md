@@ -278,7 +278,7 @@ void loop()
 ```text
  _________________________________________
 |_____________________S1__________________|
-|    _____________       _____________    |    
+|    _____________       _____________    |
 |   |____S1_0_____|     |____S1_1_____|   |
 |   |             |     |             |   |
 |   |_____________|     |_____________|   |
@@ -365,6 +365,96 @@ void loop()
   - 2. *exit*: Behavior identified by `<behavior-expression>` will be executed upon exit to the state. Use the *exit* keyword if a state has exit action.
   - 3. *do*: Behavior identified by `<behavior-expression>` will be executed as long as the object is in the state or until the computation specified by the expression is completed. This represents ongoing behavior. Use the *do* keyword only if a state has `do` action.
 
+### UML state machine types of transitions
+
+- Internal transition:
+  - Each item has the following syntax:
+    - `{<trigger>}*['['<guard>']'][/<behavior-expression>]`
+    - `{<trigger>}[guard]/action`
+    - `event[guard]/action`
+
+  - If the event occurrence matches the `trigger` and `guard` of the internal transition evaluates to be TRUE, then behavior identified by `<behavior-expression>` will be executed without exiting or re-entering the state in which it is defined.
+
+```C
+trigger() {
+    if (guard) {
+        behavior-expression;
+    }
+}
+```
+
+- For example:
+
+    ```text
+     ___________________                             _______________________________
+    |________STAT_______|                           |________IDLE___________________|
+    |                   |---TIME_TICK [e->ss==8]--->|                               |
+    |                   |                           |                               |
+    |                   |                           |                               |
+    |                   |<-------START_PAUSE--------|TIME_TICK [e->ss==8]/do_beep() |
+    |                   |                           |                               |
+    |___________________|                           |_______________________________|
+    ```
+
+  - `TIME_TICK [e->ss==8]/do_beep()` in IDLE state is called as **Internal Transition Compartment**. With:
+    - `TIME_TICK` is trigger.
+    - `e->ss==5` is guard.
+    - `do_beep()` is behavior-expression.
+  - The `STAT` state trigger `TIME_TICK [e->ss==8]` event to IDLE state. but `e->ss==8` guard is NOT TRUE so `do_beep()`.
+    - `TIME_TICK [e->ss==8]` is called as external transition triggered by STAT state to IDLE state.
+
+- Types of transitions:
+  - External.
+  - Local.
+  - Internal.
+
+- External transition:
+  - In external transition, the source state is exited due incident of a trigger, the optional action associated with transition is executed followed by execution of **exit action of the state**.
+  - An external transition signifies a change of state or an object's situation in the object's life cycle.
+  - When the state is changed, now the object is ready to process a new set of events and execute a new set of actions.
+  - Transitions are denoted by lines with arrowheads leading from a source state to a target state.
+
+    ```text
+     ___________________                             _______________________________
+    |_____COUNTDOWN_____|                           |_____________PAUSE_____________|
+    |             Source|---------START_PAUSE------>|Target                         |
+    |                   |                           |                               |
+    |                   |                           |                               |
+    |             Target|<-------START_PAUSE--------|Source                         |
+    |                   |                           |                               |
+    |___________________|                           |_______________________________|
+    ```
+
+    - `START_PAUSE` is just triggered (event), no guard, no action along the transaction.
+    - When the current state of the object is `COUNTDOWN` and if the event `START_PAUSE` is received then object transitions to state `PAUSE` (updates its state to `PAUSE`).
+      - `COUNTDOWN` is exited and `PAUSE` is entered.
+
+- For example: ![transition_example](resources/compound_transition_example.png)
+  - The following sequence will be executed:
+    - 1. `xS11`: exit of S11 is called first with S11 is sub-state of S1.
+    - 2. `t1`: action of `sig` event is called next.
+    - 3. `xS1`: exit of S1 state is called. Now we exit of state S1.
+    - 4. `t2`: This action is called mean S1 exit and it trigger a event to switch state to T1.
+    - 5. `eT1`: entry of T1 is called, now we in T1 state.
+    - 6. `eT11`: entry of T11 is called (T11 is sub state of T1).
+    - 7. `t3`: is called, this is triggered by t2.
+    - 8. `eT111`: entry of T111 is called  (T111 is sub state of T11).
+
+- As you can see: the sequence be executed: (exit sub-state)--->(trigger internal transition to parent-state)--->(exit parent-state)--->(trigger external transition to another state)--->(Entry new state)->(trigger internal transition to sub-state)--->(entry-sub-state)--->(...)
+  - We exit from internal to external and entry from external to internal.
+
+- Internal transition:
+  - Internal is special case of a local transition that is self-transition(i.e., with the same source and target states), such that the state is never exited (and, thus, not re-entered), which means that no exit or entry behaviors are executed when this transition is executed. This kind of transition can only be defined if the source `Vertex is a State`.
+
+- Local transition:
+  - Local is the opposite of external, meaning that the Transition does not exit its containing state (and, hence, the exit Behavior of the containing State will not be executed). However, for local transitions, the target Vertex must be different from its source Vertex. A local Transition can only exist within a composite State.
+
+- **Few points to remember**:
+  - `doActivity` behavior commences execution when the state is entered only after the state entry behavior has completed.
+  - entry, exit, do, cannot be associated with any transitions.
+  - If all transitions into a state perform the same action, push the common action inside the state to make it an entry action.
+  - If all transitions leaving a state perform the same action, push the common action inside the state to make it an exit action.
+
 ### Events and signals
 
 - Events (Trigger)
@@ -382,3 +472,22 @@ void loop()
   - An event usually has 2 components:
     - 1. Signal.
     - 2. One or more associated values or parameters (optional).
+  - For example:
+    - When you click Increase button:
+      - event `sig: INC_TIME` this event signifies by its signal attribute that the user has pressed a button which increase the time.
+      - The signal doesn't require associated parameters.
+    - When you click direction button:
+      - event: `sig: TIME_CHANGE` with parameter: `dir Direction_t`.
+
+        ```C
+        enum {
+            UP,
+            DOWN
+        } Direction_t;
+        ```
+
+      - This event signifies by its signal attribute that the user has pressed a button that changes time.
+      - The signal has an associated parameter that encodes whether the user has pressed a button that increases time (UP) or decreases time (DOWN).
+
+  - Another example:
+    - when you click your keyboard number, event: `sig: DIGIT_0_9` with parameter: `digit uint8_t`.
